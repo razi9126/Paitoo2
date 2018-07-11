@@ -119,7 +119,6 @@ chai.use(chaiHttp);
                     .field("cusine","Succesful edit ")
                     .end((err, res) => {
                         res.should.have.status(200);
-                        res.body.should.be.a('object');                                 //Empty body ({})
                       done();
                     });
           });
@@ -139,20 +138,49 @@ chai.use(chaiHttp);
                     });
           });
 
-          it('it should NOT edit a menu item to an non existing restaurant', (done) => {
+          it('it should NOT edit a menu item to a non existing restaurant(400)', (done) => {
             chai.request('http://localhost:8080')
                     .post('/editItem/5b448e27586ede25e8b314f6')
-                    .field('id', '5b448e27586ede25e8b314f6')
+                    .field('id', '5b448e27586ede25e8b314f6')        //This record does not exist
                     .field("originalName","Chai")
                     .field("newName","Edited Name")
                     .field("originalCategory","bev")
                     .field("newCategory","bev")
                     .end((err, res) => {
                         res.should.have.status(400);
+                        // console.log(res.body)
+                      done();
+                    });
+          });
+
+          it('it should delete a menu item to an existing restaurant', (done) => {
+            chai.request('http://localhost:8080')
+                    .post('/deleteMenuItem')
+                    .field('id', '5b447e27586ede25e8b314f6')       
+                    .field("name","Edited Name")
+                    .field("category","bev")
+                    .field("originalCategory","bev")
+                    .field("newCategory","bev")
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        // console.log(res.body)
+                      done();
+                    });
+          });
+
+          it('it should delete an existing restaurant', (done) => {
+            chai.request('http://localhost:8080')
+                    .post('/deleteRestaurant')
+                    .field('id', '5b447e27586ede25e8b314f6')       
+                    .end((err, res) => {
+                        res.should.have.status(200);
                         console.log(res.body)
                       done();
                     });
           });
+
+
+
 
 
 
