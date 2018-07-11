@@ -134,7 +134,7 @@ chai.use(chaiHttp);
                     .field("newCategory","bev")
                     .end((err, res) => {
                         res.should.have.status(200);
-                        console.log(res)
+                        // console.log(res)
                       done();
                     });
           });
