@@ -406,7 +406,7 @@ function deleteMenuItem(req,res,next){
     restaurantProvider.deleteMenuItem(req.params,function(onlyItem){
         res.send(200);
         if(onlyItem)
-            deleteMenuItemMessage(req.params);
+            // deleteMenuItemMessage(req.params);
         next();
     });
 }
@@ -417,18 +417,18 @@ function deleteRestaurant(req,res,next){
     res.header('Access-Control-Allow-Headers',"*");
     console.log('delete restaurant request');
     restaurantProvider.deleteRestaurant(req.params,function(restaurant){
-        if(restaurant.images){
-            restaurant.images.map(image=>{
-                s3.deleteObject({Bucket:image.bucket,Key:image.name},function(err,data){
-                    if(err)
-                        console.log(err);
-                    else
-                        console.log(data);
-                });
-                res.send(200);
-                deleteRestaurantMessage(req.params);
-            });
-        }
+        // if(restaurant.images){
+        //     restaurant.images.map(image=>{
+        //         s3.deleteObject({Bucket:image.bucket,Key:image.name},function(err,data){
+        //             if(err)
+        //                 console.log(err);
+        //             else
+        //                 console.log(data);
+        //         });
+                res.send(200,restaurant);
+                // deleteRestaurantMessage(req.params);
+            // });
+        // }
     });
 }
 function unfollowRestaurantMessage(message){
@@ -455,8 +455,10 @@ function followRestaurantMessage(message){
 }
 function followRestaurant(req,res,next){
     restaurantProvider.followRestaurant(req.params,function(err,result){
-        if(err)
+        if(err){
             res.send(400,err);
+            console.log(err);
+        }
         else
             res.send(200,result);
     });
@@ -528,7 +530,7 @@ function migrate(req,res,next){
             res.send(400,err);
         else{
             res.send(200,'ok');
-            newRestaurantMessage({id:req.params._id,cusine:req.params.cusine,city:req.params.city});
+            // newRestaurantMessage({id:req.params._id,cusine:req.params.cusine,city:req.params.city});
         }
     });
 }

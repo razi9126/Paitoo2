@@ -341,7 +341,7 @@ RestaurantProvider.prototype.editItem = function(params,callback){
 }
 
 RestaurantProvider.prototype.deleteMenuItem=function(params,callback){
-    collection=this.db.get('production');
+    const collection=this.db.get('production');
     var onlyItem=true;
     collection.findOne({_id:params.id}).then(doc=>{
         doc.menu=doc.menu.filter(item=>item.name!=params.name);
@@ -356,7 +356,7 @@ RestaurantProvider.prototype.deleteMenuItem=function(params,callback){
 }
 
 RestaurantProvider.prototype.deleteRestaurant=function(params,callback){
-    collection=this.db.get('production');
+    const collection=this.db.get('production');
     collection.findOne({_id:params.id}).then(doc=>{
         collection.remove({_id:params.id}).then(()=>{
             callback(doc);
@@ -368,7 +368,7 @@ RestaurantProvider.prototype.deleteRestaurant=function(params,callback){
     });
 }
 RestaurantProvider.prototype.unfollowRestaurant = function(params,callback){
-    collection=this.db.get('production');
+    const collection=this.db.get('production');
     collection.findOneAndUpdate({_id:params.restaurant},{$pull:{followedBy:params.user}}).
         then(result=>{
             callback(null,result);
@@ -377,21 +377,23 @@ RestaurantProvider.prototype.unfollowRestaurant = function(params,callback){
         });
 }
 RestaurantProvider.prototype.followRestaurant = function(params,callback){
-    collection=this.db.get('production');
+    const collection=this.db.get('production');
     console.log(params);
     collection.findOneAndUpdate({_id:params.restaurant},{$addToSet:{followedBy:params.user}}).
         then(result=>{
             collection.findOne({_id:params.restaurant}).then(doc=>{
                 console.log(doc);
             });
+            console.log("PASSS")
             callback(null,result);
         }).catch(err=>{
+            console.log("ERROROR")
             callback(err);
         });
 }
 RestaurantProvider.prototype.getCategories = function(callback){
     var results = [];
-    collection = this.db.get('production');
+    const collection = this.db.get('production');
     collection.find({}).then((docs)=>{
         docs.map(doc=>{
             if(doc.menu){
@@ -409,7 +411,7 @@ RestaurantProvider.prototype.getCategories = function(callback){
 }
 RestaurantProvider.prototype.dishSearch = function(params,callback){
     var dish = params.dish;
-    collection = this.db.get('production');
+    const collection = this.db.get('production');
     collection.find({
         "menu.name":params.dish
     },{"menu.$":1,address:1,name:1,images:1,generalScores:1,paitooScores:1,stories:1}).then(docs=>{
@@ -420,7 +422,7 @@ RestaurantProvider.prototype.dishSearch = function(params,callback){
 }
 RestaurantProvider.prototype.categorySearch = function(params,callback){
     var category = params.category;
-    collection = this.db.get('production');
+    const collection = this.db.get('production');
     collection.aggregate([{$match:{"menu.category":category}},{$project:{name:1,generalScores:1,address:1,paitooScores:1,images:1,count:1,stories:1,menu:{$filter:{input:'$menu',as:'num',cond:{$eq:['$$num.category',category]}}}}}]).then(docs=>{
         callback(null,docs);
     }).catch(err=>{
@@ -428,8 +430,9 @@ RestaurantProvider.prototype.categorySearch = function(params,callback){
     });
 }
 RestaurantProvider.prototype.migrate = function(restaurant,callback){
-    collection = this.db.get('production');
+    const collection = this.db.get('production');
     collection.insert(restaurant).then(response=>{
+        console.log(response)
         callback(null,response);
     }).catch(err=>{
         callback(err);
